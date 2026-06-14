@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feliz Día del Padre 🤎</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Playfair+Display:ital,wght@0,500;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #1a2332 0%, #090d16 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Playfair Display', serif;
+            perspective: 1200px;
+        }
+
+        /* --- CORAZONES DE FONDO (Estilo dibujo a mano) --- */
+        .bg-heart {
+            position: absolute;
+            font-size: 40px;
+            color: rgba(230, 185, 125, 0.25);
+            font-family: 'Caveat', cursive;
+            user-select: none;
+            filter: drop-shadow(0 0 5px rgba(230, 185, 125, 0.2));
+        }
+
+        /* --- CONTENEDOR DE LA ESCENA --- */
+        .scene {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 550px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            padding: 20px;
+        }
+
+        /* --- EL SOBRE REALISTA --- */
+        .envelope-wrapper {
+            position: absolute;
+            width: 380px;
+            height: 260px;
+            cursor: pointer;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 5;
+        }
+
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: #334155;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+        }
+
+        /* Solapa de arriba */
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #1e293b;
+            clip-path: polygon(0 0, 100% 0, 50% 55%);
+            transform-origin: top;
+            transition: transform 0.6s ease;
+            z-index: 4;
+        }
+
+        /* Pliegues laterales e inferior */
+        .envelope-left {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 100%;
+            clip-path: polygon(0 0, 52% 50%, 0 100%);
+            background: linear-gradient(30deg, #2c3749, #38465c);
+            z-index: 3;
+            border-radius: 0 0 0 12px;
+        }
+
+        .envelope-right {
+            position: absolute;
+            bottom: 0; right: 0; width: 100%; height: 100%;
+            clip-path: polygon(100% 0, 48% 50%, 100% 100%);
+            background: linear-gradient(-30deg, #2c3749, #38465c);
+            z-index: 3;
+            border-radius: 0 0 12px 0;
+        }
+
+        .envelope-bottom {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 100%;
+            clip-path: polygon(0 100%, 100% 100%, 50% 45%);
+            background: linear-gradient(0deg, #202938, #2a3547);
+            z-index: 3;
+            border-radius: 0 0 12px 12px;
+        }
+
+        /* Sello de Cera Rojo */
+        .wax-seal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -40%);
+            width: 55px;
+            height: 55px;
+            background: radial-gradient(#b91c1c, #7f1d1d);
+            border-radius: 50%;
+            z-index: 5;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4), inset 0 0 8px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fbbf24;
+            font-size: 22px;
+            transition: all 0.5s ease;
+        }
+
+        /* --- PANTALLA DE LA CARTA ABIERTA --- */
+        .display-container {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            opacity: 0;
+            transform: scale(0.8) translateY(50px);
+            pointer-events: none;
+            transition: all 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+            z-index: 1;
+        }
+
+        /* Título Principal Superior */
+        .main-title {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3.5rem;
+            color: #f5e6d3;
+            font-family: 'Caveat', cursive;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            width: 100%;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.5s ease 0.6s;
+        }
+
+        /* Foto del lado izquierdo */
+        .photo-frame {
+            background: #fff;
+            padding: 15px 15px 50px 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            transform: rotate(-3deg);
+            border-radius: 4px;
+            height: 420px;
+            align-self: center;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+                .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Ajusta la foto completa sin recortar a tu papá */
+            object-position: center center; /* La mantiene perfectamente centrada */
+            background-color: #fafafa; /* Un fondo suave por si quedan bordes libres */
+        }
+
+
+        .photo-frame::after {
+            content: "tu ❤️";
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Caveat', cursive;
+            font-size: 1.8rem;
+            color: #333;
+        }
+
+        /* Pergamino / Carta del lado derecho */
+        .parchment {
+            background-color: #f3e5ca;
+            background-image: radial-gradient(#dfd0b2 1px, transparent 1px);
+            background-size: 24px 24px;
+            padding: 40px 30px;
+            box-shadow: 2px 15px 35px rgba(0,0,0,0.5);
+            border-radius: 4px;
+            height: 460px;
+            overflow-y: auto;
+            position: relative;
+            border: 1px solid #e6d7b8;
+            clip-path: polygon(1% 2%, 98% 1%, 100% 98%, 2% 99%, 0% 50%);
+        }
+
+        .letter-content h2 {
+            font-family: 'Caveat', cursive;
+            color: #5c4033;
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+        }
+
+        .letter-content p {
+            color: #2b1d16;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            text-align: justify;
+            margin-bottom: 15px;
+        }
+
+        /* --- ESTADO ABIERTO --- */
+        .scene.is-open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        .scene.is-open .wax-seal {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0);
+        }
+
+        .scene.is-open .envelope-wrapper {
+            transform: scale(0.5) translateY(350px);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .scene.is-open .display-container {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+            z-index: 12;
+        }
+
+        .scene.is-open .main-title {
+            opacity: 1;
+        }
+
+        /* Adaptabilidad para Celulares */
+        @media (max-width: 768px) {
+            .display-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                overflow-y: auto;
+                height: 90vh;
+                padding-top: 60px;
+            }
+            .photo-frame {
+                height: 280px;
+                order: 2;
+            }
+            .parchment {
+                height: auto;
+                order: 1;
+            }
+            .main-title {
+                font-size: 2.5rem;
+                top: 0px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-heart" style="top: 15%; left: 10%; transform: rotate(-15deg);">🖤</div>
+    <div class="bg-heart" style="top: 20%; right: 12%; transform: rotate(20deg);">🖤</div>
+    <div class="bg-heart" style="bottom: 15%; left: 15%; transform: rotate(10deg);">🖤</div>
+    <div class="bg-heart" style="bottom: 25%; right: 8%; transform: rotate(-25deg);">🖤</div>
+    <div class="bg-heart" style="top: 50%; left: 5%; transform: rotate(5deg);">🖤</div>
+    <div class="bg-heart" style="top: 65%; right: 18%; transform: rotate(-10deg);">🖤</div>
+
+    <div class="scene" id="mainScene">
+        
+        <div class="envelope-wrapper" onclick="openCard()">
+            <div class="envelope">
+                <div class="envelope-flap"></div>
+                <div class="envelope-left"></div>
+                <div class="envelope-right"></div>
+                <div class="envelope-bottom"></div>
+                <div class="wax-seal">❤</div>
+            </div>
+        </div>
+
+        <div class="main-title">Feliz Día del Padre</div>
+        
+        <div class="display-container">
+            
+            <div class="photo-frame">
+                <img src="padre.jpg" alt="Papá e Hijo/a">
+            </div>
+
+            <div class="parchment">
+                <div class="letter-content">
+                    <h2>Querido Papá,</h2>
+                    <p>
+                        ¡Feliz Día del Padre! Hoy quería tomarme un momento para escribirte una carta de verdad y agradecerte por absolutamente todo lo que has hecho por mí.
+                    </p>
+                    <p>
+                        Mientras crecía, siempre fuiste la persona a la que admiraba, y a medida que me hago mayor, mi agradecimiento y respeto hacia ti solo siguen creciendo. Gracias por cada sacrificio en silencio, por las formas sutiles en las que siempre me has apoyado y por las incontables lecciones que me has enseñado, te hayas dado cuenta de ello o no.
+                    </p>
+                    <p>
+                        Me siento infinitamente agradecido por todos los recuerdos que compartimos, desde los grandes logros hasta los momentos más simples del día a día. Gracias por ser un ancla firme en mi vida y por creer siempre en mí, incluso en esos momentos en los que yo mismo dudaba.
+                    </p>
+                    <p>
+                        Te quiero muchísimo más de lo que las palabras pueden expresar. Espero que pases un día maravilloso hoy, porque te lo has ganado de verdad.
+                    </p>
+                    <p style="font-family: 'Caveat', cursive; font-size: 1.8rem; text-align: right; margin-top: 25px; color: #5c4033;">
+                        Con todo mi amor, <br> joseph
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        function openCard() {
+            document.getElementById('mainScene').classList.add('is-open');
+        }
+    </script>
+</body>
+</html>
+
+
+
+
